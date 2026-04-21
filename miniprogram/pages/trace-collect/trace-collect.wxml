@@ -1,0 +1,61 @@
+<view class="container">
+  <!-- 离线状态通告栏 -->
+  <view class="notice-bar" wx:if="{{offlineQueueLength > 0}}">
+    <icon type="warn" size="14" color="#ff9800" />
+    <text>有 {{offlineQueueLength}} 条记录等待网络恢复后自动同步</text>
+  </view>
+
+  <view class="header">
+    <text class="title">采集溯源信息</text>
+    <text class="desc">请拍摄实地照片或视频，并描述生长情况</text>
+  </view>
+
+  <!-- 1. 核心操作：拍摄 -->
+  <view class="card">
+    <view class="card-title">第一步：拍摄现场</view>
+    <view class="media-container">
+      <block wx:for="{{tempMediaList}}" wx:key="tempFilePath">
+        <view class="media-box">
+          <image wx:if="{{item.fileType === 'image'}}" src="{{item.tempFilePath}}" mode="aspectFill" />
+          <video wx:else src="{{item.tempFilePath}}" controls="{{false}}" />
+          <view class="del-tag" catchtap="removeMedia" data-index="{{index}}">删除</view>
+        </view>
+      </block>
+      <view class="btn-capture" bindtap="captureMedia" wx:if="{{tempMediaList.length < 3}}">
+        <image src="/assets/icons/camera-large.png" />
+        <text>点击拍摄</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 2. 核心操作：语音描述 -->
+  <view class="card">
+    <view class="card-title">第二步：说话描述</view>
+    <textarea 
+      class="desc-input" 
+      placeholder="描述一下现在的情况（或使用下方语音输入）" 
+      value="{{remark}}"
+      bindinput="onRemarkInput"
+    />
+    <view 
+      class="voice-btn {{isRecording ? 'active' : ''}}" 
+      bindtouchstart="startVoice" 
+      bindtouchend="endVoice"
+    >
+      <image src="/assets/icons/mic.png" />
+      <text>{{isRecording ? '松开 结束' : '按住 说话'}}</text>
+    </view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="footer">
+    <button 
+      class="main-submit-btn" 
+      bindtap="submitAll" 
+      loading="{{isSubmitting}}"
+      disabled="{{tempMediaList.length === 0}}"
+    >
+      提交存档
+    </button>
+  </view>
+</view>

@@ -1,0 +1,12 @@
+{
+  "name": "manageTraceability",
+  "version": "1.0.0",
+  "description": "云开发后端：处理溯源数据的上传与审核逻辑",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

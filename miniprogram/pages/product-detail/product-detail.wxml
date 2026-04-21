@@ -1,0 +1,125 @@
+<!-- pages/product-detail/product-detail.wxml -->
+<view class="container">
+  <!-- 1. 顶部产品卡片：故事化展示 -->
+  <view class="product-hero">
+    <image class="hero-bg" src="{{product.images[0]}}" mode="aspectFill" lazy-load />
+    <view class="hero-overlay">
+      <view class="badge-container">
+        <view class="student-medal">
+          <image src="/assets/icons/medal.png" />
+          <text>大学生严选</text>
+        </view>
+        <view class="geo-badge">地理标志保护产品</view>
+      </view>
+      <view class="hero-info">
+        <text class="hero-name">{{product.name}}</text>
+        <text class="hero-origin">产地：青海省·那曲高原纯净牧场</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 价格条 -->
+  <view class="price-bar">
+    <view class="price-left">
+      <text class="symbol">¥</text>
+      <text class="num">{{product.unitPrice / 100}}</text>
+      <text class="unit">/{{product.unit}}</text>
+    </view>
+    <view class="price-right">
+      <text class="tag">顺丰包邮</text>
+      <text class="tag">产地直发</text>
+    </view>
+  </view>
+
+  <!-- 2. 产品故事轴 (Timeline) -->
+  <view class="story-section">
+    <view class="story-header">
+      <text class="story-title">成长故事轴</text>
+      <text class="story-subtitle">每一刻的真实记录</text>
+    </view>
+
+    <view class="timeline">
+      <block wx:for="{{traceRecords}}" wx:key="_id">
+        <view class="timeline-item">
+          <!-- 左侧：日期与时间 -->
+          <view class="time-column">
+            <text class="date">{{item.displayDate}}</text>
+            <text class="time">{{item.displayTime}}</text>
+          </view>
+          
+          <!-- 中间：轴线 -->
+          <view class="axis-column">
+            <view class="node"></view>
+            <view class="line"></view>
+          </view>
+          
+          <!-- 右侧：内容 -->
+          <view class="content-column">
+            <view class="story-card">
+              <view class="location-tag">
+                <image src="/assets/icons/loc-white.png" />
+                <text>{{item.location.address}}</text>
+              </view>
+              
+              <!-- 图片/视频展示：支持懒加载与淡入 -->
+              <view class="media-preview">
+                <block wx:for="{{item.mediaFiles}}" wx:for-item="media" wx:key="fileId">
+                  <image 
+                    wx:if="{{media.type === 'image'}}" 
+                    src="{{media.fileId}}" 
+                    mode="aspectFill" 
+                    lazy-load
+                    class="fade-in"
+                    bindtap="previewImage" 
+                    data-current="{{media.fileId}}" 
+                    data-list="{{item.mediaFiles}}"
+                  />
+                  <video 
+                    wx:else 
+                    src="{{media.fileId}}" 
+                    object-fit="cover"
+                  />
+                </block>
+              </view>
+              
+              <view class="story-text">{{item.remark}}</view>
+              
+              <view class="farmer-info">
+                <image class="farmer-avatar" src="/assets/icons/avatar-default.png" />
+                <text>记录人：牧民 {{item.farmerName || '索南'}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <!-- 加载更多 -->
+    <view class="load-more" bindtap="loadMore" wx:if="{{hasMore}}">
+      <text>查看更早的记录</text>
+    </view>
+  </view>
+
+  <!-- 3. 底部浮动工具栏 -->
+  <view class="float-toolbar">
+    <view class="action-btn call" bindtap="contactAction" data-type="phone">
+      <image src="/assets/icons/phone-white.png" />
+      <text>电话联系</text>
+    </view>
+    <view class="action-btn wechat" bindtap="contactAction" data-type="wechat">
+      <image src="/assets/icons/wechat-white.png" />
+      <text>复制微信</text>
+    </view>
+  </view>
+
+  <!-- 安全提示弹窗 -->
+  <view class="security-mask" wx:if="{{showSecurityNotice}}" bindtap="closeNotice">
+    <view class="security-modal" catchtap="stopBubble">
+      <view class="modal-header">安全交易提示</view>
+      <view class="modal-body">
+        该交易为线下直接撮合，平台仅提供源头溯源信息，不参与资金流转。请务必确认货品后再付款，注意个人财产安全。
+      </view>
+      <button class="confirm-btn" bindtap="doContact">我知道了，继续联系</button>
+    </view>
+  </view>
+</view>
